@@ -57,7 +57,7 @@ public final class QueryUtils {
             for (int i = 0; i < quakes.length(); i++) {
                 JSONObject quake = quakes.getJSONObject(i);
                 JSONObject properties = quake.getJSONObject("properties");
-                String magnitude = properties.getString("mag");
+                double magnitude = properties.getDouble("mag");
                 String place = properties.getString("place");
                 Long milliseconds = properties.getLong("time");
 
