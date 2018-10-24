@@ -13,6 +13,7 @@ import java.util.Date;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     private static final String LOG_TAG = EarthquakeAdapter.class.getSimpleName();
+
     public EarthquakeAdapter(Activity context, ArrayList<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
@@ -26,11 +27,22 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         Earthquake currentEarthquake = getItem(position);
 
-        TextView locationTextView = (TextView) listItemView.findViewById(R.id.earthquake_location);
-        locationTextView.setText(currentEarthquake.getLocation());
-
         TextView magnitudeTextView = (TextView) listItemView.findViewById(R.id.earthquake_magnitude);
         magnitudeTextView.setText(currentEarthquake.getMagnitude());
+
+        TextView distanceTextView = (TextView) listItemView.findViewById(R.id.earthquake_distance);
+        TextView locationTextView = (TextView) listItemView.findViewById(R.id.earthquake_location);
+
+        String location = currentEarthquake.getLocation();
+        String[] locationData = location.split("of");
+
+        if (locationData.length == 2) {
+            distanceTextView.setText(locationData[0] + "of");
+            locationTextView.setText(locationData[1]);
+        } else {
+            distanceTextView.setText("Near");
+            locationTextView.setText(locationData[0]);
+        }
 
         Date dateObject = new Date(currentEarthquake.getDate());
 
