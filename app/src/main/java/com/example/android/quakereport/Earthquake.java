@@ -5,12 +5,14 @@ public class Earthquake {
     private double magnitude;
     private String location;
     private long date;
+    private String url;
 
 
-    public Earthquake(double eMagnitude, String eLocation, long eMilliseconds) {
+    public Earthquake(double eMagnitude, String eLocation, long eMilliseconds, String eUrl) {
         magnitude = eMagnitude;
         location = eLocation;
         date = eMilliseconds;
+        url = eUrl;
     }
 
     public String getLocation() {
@@ -23,5 +25,9 @@ public class Earthquake {
 
     public double getMagnitude() {
         return magnitude;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
