@@ -59,11 +59,13 @@ public final class QueryUtils {
                 JSONObject properties = quake.getJSONObject("properties");
                 String magnitude = properties.getString("mag");
                 String place = properties.getString("place");
-                Long time = properties.getLong("time");
-                Date dateObject = new Date(time);
+                Long milliseconds = properties.getLong("time");
+                Date dateObject = new Date(milliseconds);
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM DD, yyyy");
+                SimpleDateFormat timeFormatter = new SimpleDateFormat("h:mm  a");
                 String date = dateFormatter.format(dateObject);
-                earthquakes.add(new Earthquake(place, date, magnitude));
+                String time = timeFormatter.format(dateObject);
+                earthquakes.add(new Earthquake(magnitude, place, date, time));
             }
 
 
