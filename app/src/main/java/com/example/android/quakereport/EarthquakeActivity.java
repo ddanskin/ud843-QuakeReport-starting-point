@@ -16,7 +16,10 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,10 +39,14 @@ import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderCallbacks<List<Earthquake>> {
 
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     private static final String LOG_TAG = EarthquakeActivity.class.getName();
 
-    /** URL to query the USGS dataset for earthquake information */
+    /**
+     * URL to query the USGS dataset for earthquake information
+     */
     private static final String USGS_REQUEST_URL =
             "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
@@ -47,15 +54,28 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
      * Constant value for hte earthquake loader ID.
      */
     private static final int EARTHQUAKE_LOADER_ID = 1;
-    /** Adapter for the list of earthquakes */
+    /**
+     * Adapter for the list of earthquakes
+     */
     private EarthquakeAdapter mAdapter;
 
-    /** TextView that is displayed when the list is empty */
+    /**
+     * TextView that is displayed when the list is empty
+     */
     private TextView mEmptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+
         setContentView(R.layout.earthquake_activity);
 
         // Find a reference to the {@link ListView} in the layout
@@ -79,13 +99,19 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
                 startActivity(websiteIntent);
             }
         });
-
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         earthquakeListView.setEmptyView(mEmptyStateTextView);
+        if (isConnected) {
+            LoaderManager loaderManager = getLoaderManager();
 
-        LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+        } else {
+            ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.loading_spinner);
+            loadingSpinner.setVisibility(View.GONE);
 
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+            mEmptyStateTextView.setText(R.string.no_internet_connection);
+
+        }
     }
 
     @NonNull
